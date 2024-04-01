@@ -20,6 +20,14 @@ window = QMainWindow()
 title = QLabel(window)
 table = QTableWidget(window)
 
+def add_table_row(guild_text : str, channel_text : str, username : str, message : str):
+    row_num = table.rowCount()
+    table.insertRow(row_num)
+    table.setItem(row_num, 0, QTableWidgetItem(guild_text))
+    table.setItem(row_num, 1, QTableWidgetItem(channel_text))
+    table.setItem(row_num, 2, QTableWidgetItem(username))
+    table.setItem(row_num, 3, QTableWidgetItem(message))
+
 def load_mainwindow():
     window.setAttribute(QtCore.Qt.WidgetAttribute.WA_DeleteOnClose)
     window.setWindowTitle("Status Board")
@@ -31,12 +39,8 @@ def load_mainwindow():
     header.setStretchLastSection(True)
     header.setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
     table.verticalHeader().hide()
-    table.setRowCount(1)
     table.setColumnCount(4)
-    table.setItem(0, 0, QTableWidgetItem("Guild"))
-    table.setItem(0, 1, QTableWidgetItem("Channel"))
-    table.setItem(0, 2, QTableWidgetItem("Username"))
-    table.setItem(0, 3, QTableWidgetItem("Message"))
+    add_table_row("Guild", "Channel", "Username", "Message")
     table.resize(780, 350)
     table.move(10, 40)
     table.itemChanged.connect(table.scrollToBottom)
@@ -55,7 +59,7 @@ def query_guild(guild_id : str, channel_id : str):
         return guild_name, channel_id
     return guild_id, channel_id
 
-def message_handler(message):
+def message_handler(message : dict):
     data = message["d"]
     if "guild_id" not in data.keys(): return
     guild_id = data["guild_id"]
@@ -63,12 +67,7 @@ def message_handler(message):
     username = data["author"]["username"]
     content = data["content"]
     guild_text, channel_text = query_guild(guild_id, channel_id)
-    table.insertRow(table.rowCount())
-    row_num = table.rowCount() - 1
-    table.setItem(row_num, 0, QTableWidgetItem(guild_text))
-    table.setItem(row_num, 1, QTableWidgetItem(channel_text))
-    table.setItem(row_num, 2, QTableWidgetItem(username))
-    table.setItem(row_num, 3, QTableWidgetItem(content))
+    add_table_row(guild_text, channel_text, username, content)
 
 async def main():
     worker = discordbot.DiscordWorker()
