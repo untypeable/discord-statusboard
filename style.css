@@ -1,0 +1,9 @@
+QMainWindow, QTableWidget, QHeaderView, QScrollBar
+{
+	background-color: rgb(50, 50, 70);
+}
+
+QLabel, QTableWidget
+{
+	color: rgb(200, 200, 200);
+}
